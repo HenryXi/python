@@ -31,6 +31,25 @@ def choose_built_project(project_list):
     return target_project
 
 
+def build_supp_service(target_project):
+    if '-web' in target_project:
+        service_project = target_project.replace('-web', '-service')
+        service_project_build_url = hudson_host + service_project + '/build?delay=0sec'
+        service_war_url = war_host + service_project + "/M_LHJH_" + service_project + "/"
+        print('==========build service first=========')
+        service_content = urllib2.urlopen(service_project_build_url).read()
+        service_dom = BeautifulSoup.BeautifulSoup(service_content)
+        service_current_war = service_dom.findAll('a')[-1].getText()[:-1]
+        while True:
+            time.sleep(3)
+            service_current_content = urllib2.urlopen(service_war_url).read()
+            service_dom = BeautifulSoup.BeautifulSoup(service_current_content)
+            print('...')
+            if service_current_war != service_dom.findAll('a')[-1].getText()[:-1]:
+                print('==========service build finish=========')
+                break
+
+
 def build_interface(target_project):
     if '-service' in target_project:
         interface_project = target_project.replace('-service', '-interface')
@@ -100,6 +119,7 @@ def main():
     print '==========Auto deploy lhjh project v1.0============'
     project_list = get_project_list()
     target_project = choose_built_project(project_list)
+    build_supp_service(target_project);
     build_interface(target_project)
     target_url = build_target_project(target_project)
     undeploy_old_project(target_project)
