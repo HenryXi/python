@@ -8,6 +8,7 @@ import BeautifulSoup
 hudson_host = 'http://192.168.5.221:8080/hudson/view/LHJH/job/M_LHJH_'
 war_host = 'http://192.168.100.195/build/LHJH/'
 path = os.getcwd()
+time_out = 20
 
 
 def get_project_list():
@@ -41,11 +42,11 @@ def build_supp_service(target_project):
         service_war_content = urllib2.urlopen(service_war_url).read()
         service_dom = BeautifulSoup.BeautifulSoup(service_war_content)
         service_current_war = service_dom.findAll('a')[-1].getText()[:-1]
-        while True:
+        for waiting_time in range(1, time_out):
             time.sleep(3)
             service_current_content = urllib2.urlopen(service_war_url).read()
             service_dom = BeautifulSoup.BeautifulSoup(service_current_content)
-            print('...')
+            print_loading(waiting_time)
             if service_current_war != service_dom.findAll('a')[-1].getText()[:-1]:
                 print('==========lhjh-supp-service build finish=========')
                 break
@@ -61,11 +62,11 @@ def build_interface(target_project):
         interface_content = urllib2.urlopen(interface_war_url).read()
         interface_dom = BeautifulSoup.BeautifulSoup(interface_content)
         interface_current_war = interface_dom.findAll('a')[-1].getText()[:-1]
-        while True:
+        for waiting_time in range(1, time_out):
             time.sleep(3)
             interface_current_content = urllib2.urlopen(interface_war_url).read()
             interface_dom = BeautifulSoup.BeautifulSoup(interface_current_content)
-            print('...')
+            print_loading(waiting_time)
             if interface_current_war != interface_dom.findAll('a')[-1].getText()[:-1]:
                 print('==========interface build finish=========')
                 break
@@ -79,11 +80,11 @@ def build_target_project(target_project):
     war_current_content = urllib2.urlopen(war_url).read()
     target_project_dom = BeautifulSoup.BeautifulSoup(war_current_content)
     current_war = target_project_dom.findAll('a')[-1].getText()[:-1]
-    while True:
+    for waiting_time in range(1, time_out):
         time.sleep(3)
         war_current_content = urllib2.urlopen(war_url).read()
         target_project_dom = BeautifulSoup.BeautifulSoup(war_current_content)
-        print('...')
+        print_loading(waiting_time)
         if current_war != target_project_dom.findAll('a')[-1].getText()[:-1]:
             target_url = war_url + target_project_dom.findAll('a')[-1].getText()[:-1]
             print('==========build finish=========')
@@ -95,9 +96,9 @@ def build_target_project(target_project):
 def undeploy_old_project(target_project):
     print('============delete old war=============')
     os.remove(path + "/" + target_project + ".war")
-    while True:
+    for waiting_time in range(1, time_out):
         time.sleep(1)
-        print('...')
+        print_loading(waiting_time)
         if not os.path.isdir(path + "/" + target_project):
             print('============delete finish=============')
             break
@@ -109,9 +110,9 @@ def deploy_new_war(target_project, target_url):
     page = urllib2.urlopen(target_url + "/" + target_project + ".war")
     open(out, "wb").write(page.read())
     print('============deploying war=============')
-    while True:
+    for waiting_time in range(1, time_out):
         time.sleep(1)
-        print('...')
+        print_loading(waiting_time)
         if os.path.isdir(path + "/" + target_project):
             break
     print('============deploy finish!=============')
@@ -127,7 +128,14 @@ def main():
     undeploy_old_project(target_project)
     deploy_new_war(target_project, target_url)
     print '====Auto deploy ' + target_project + ' finish!======'
-    print '=====God bless '+target_project+' without bug======='
+    print '=====God bless ' + target_project + ' without bug======='
+
+
+def print_loading(num):
+    if num == time_out-1:
+        sys.exit("auto deploy timeout! ")
+    print '=' * num + '>';
+    num += 1
 
 
 if __name__ == '__main__':
