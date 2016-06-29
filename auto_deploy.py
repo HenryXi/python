@@ -118,6 +118,13 @@ def deploy_new_war(target_project, target_url):
     print('============deploy finish!=============')
 
 
+def replace_js_config(target_project):
+    print('============replace js config=============')
+    os.remove(path + "/" + target_project + "/mall/js/config.js")
+    os.rename(path + "/" + target_project + "/mall/js/config_test.js", path + "/" + target_project + "/mall/js/config.js")
+    print('============replace js config finish!=============')
+
+
 def main():
     print '==========Auto deploy lhjh project v1.0============'
     project_list = get_project_list()
@@ -127,6 +134,7 @@ def main():
     target_url = build_target_project(target_project)
     undeploy_old_project(target_project)
     deploy_new_war(target_project, target_url)
+    replace_js_config(target_project)
     print '====Auto deploy ' + target_project + ' finish!======'
     print '=====God bless ' + target_project + ' without bug======='
 
