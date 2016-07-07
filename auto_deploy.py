@@ -120,8 +120,14 @@ def deploy_new_war(target_project, target_url):
 
 def replace_js_config(target_project):
     print('============replace js config=============')
-    os.remove(path + "/" + target_project + "/mall/js/config.js")
-    os.rename(path + "/" + target_project + "/mall/js/config_test.js", path + "/" + target_project + "/mall/js/config.js")
+    for waiting_time in range(1, time_out):
+        time.sleep(1)
+        print_loading(waiting_time)
+        if os.path.isdir(path + "/" + target_project):
+            os.remove(path + "/" + target_project + "/mall/js/config.js")
+            os.rename(path + "/" + target_project + "/mall/js/config_test.js",
+                      path + "/" + target_project + "/mall/js/config.js")
+            break
     print('============replace js config finish!=============')
 
 
@@ -140,7 +146,7 @@ def main():
 
 
 def print_loading(num):
-    if num == time_out-1:
+    if num == time_out - 1:
         sys.exit("auto deploy timeout! ")
     print '=' * num + '>';
     num += 1
