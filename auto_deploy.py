@@ -29,6 +29,8 @@ def choose_built_project(project_list):
     deploy_war = input('choose the num to auto deploy:')
     target_project = project_list[deploy_war]
     print 'choose the project: ' + target_project
+    if 'ROOT'== target_project:
+        target_project = 'lhjh-support-web'
     return target_project
 
 
@@ -95,6 +97,8 @@ def build_target_project(target_project):
 
 def undeploy_old_project(target_project):
     print('============delete old war=============')
+    if 'lhjh-support-web' == target_project:
+        target_project = 'ROOT'
     os.remove(path + "/" + target_project + ".war")
     for waiting_time in range(1, time_out):
         time.sleep(1)
