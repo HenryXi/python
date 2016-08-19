@@ -29,7 +29,7 @@ def choose_built_project(project_list):
     deploy_war = input('choose the num to auto deploy:')
     target_project = project_list[deploy_war]
     print 'choose the project: ' + target_project
-    if 'ROOT'== target_project:
+    if 'ROOT' == target_project:
         target_project = 'lhjh-support-web'
     return target_project
 
@@ -110,7 +110,10 @@ def undeploy_old_project(target_project):
 
 def deploy_new_war(target_project, target_url):
     print('============download war=============')
-    out = os.path.join(path, target_project + ".war")
+    if 'lhjh-support-web' == target_project:
+        out = os.path.join(path, "ROOT.war")
+    else:
+        out = os.path.join(path, target_project + ".war")
     page = urllib2.urlopen(target_url + "/" + target_project + ".war")
     open(out, "wb").write(page.read())
     print('============deploying war=============')
@@ -118,6 +121,8 @@ def deploy_new_war(target_project, target_url):
         time.sleep(1)
         print_loading(waiting_time)
         if os.path.isdir(path + "/" + target_project):
+            break
+        elif 'lhjh-support-web' == target_project and os.path.isdir(path + "/ROOT"):
             break
     print('============deploy finish!=============')
 
@@ -131,6 +136,8 @@ def replace_js_config(target_project):
             os.remove(path + "/" + target_project + "/mall/js/config.js")
             os.rename(path + "/" + target_project + "/mall/js/config_test.js",
                       path + "/" + target_project + "/mall/js/config.js")
+            break
+        elif 'lhjh-support-web' == target_project and os.path.isdir(path + "/ROOT"):
             break
     print('============replace js config finish!=============')
 
