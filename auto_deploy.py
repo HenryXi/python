@@ -139,11 +139,14 @@ def replace_js_config(target_project):
     for waiting_time in range(1, time_out):
         time.sleep(1)
         print_loading(waiting_time)
-        if os.path.isfile(path + "/" + target_project + "/mall/js/config_test.js"):
-            os.remove(path + "/" + target_project + "/mall/js/config.js")
-            os.rename(path + "/" + target_project + "/mall/js/config_test.js",
-                      path + "/" + target_project + "/mall/js/config.js")
-            break
+        if os.path.isdir(path + "/" + target_project):
+            if os.path.isfile(path + "/" + target_project + "/mall/js/config_test.js"):
+                os.remove(path + "/" + target_project + "/mall/js/config.js")
+                os.rename(path + "/" + target_project + "/mall/js/config_test.js",
+                          path + "/" + target_project + "/mall/js/config.js")
+                break
+            else:
+                break
     print('============replace js config finish!=============')
 
 
