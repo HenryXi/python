@@ -8,7 +8,7 @@ import BeautifulSoup
 hudson_host = 'http://192.168.5.221:8080/hudson/view/LHJH/job/M_LHJH_'
 war_host = 'http://192.168.100.195/build/LHJH/'
 path = os.getcwd()
-time_out = 20
+time_out = 60
 
 
 def get_project_list():
@@ -43,13 +43,13 @@ def build_supp_service(target_project):
         urllib2.urlopen(service_project_build_url).read()
         service_war_content = urllib2.urlopen(service_war_url).read()
         service_dom = BeautifulSoup.BeautifulSoup(service_war_content)
-        service_current_war = service_dom.findAll('a')[-1].getText()[:-1]
+        service_current_war = service_dom.findAll('a')
         for waiting_time in range(1, time_out):
             time.sleep(3)
             service_current_content = urllib2.urlopen(service_war_url).read()
             service_dom = BeautifulSoup.BeautifulSoup(service_current_content)
             print_loading(waiting_time)
-            if service_current_war != service_dom.findAll('a')[-1].getText()[:-1]:
+            if service_current_war.__len__() != service_dom.findAll('a').__len__():
                 print('==========lhjh-supp-service build finish=========')
                 break
 
@@ -63,13 +63,13 @@ def build_interface(target_project):
         urllib2.urlopen(interface_project_build_url).read()
         interface_content = urllib2.urlopen(interface_war_url).read()
         interface_dom = BeautifulSoup.BeautifulSoup(interface_content)
-        interface_current_war = interface_dom.findAll('a')[-1].getText()[:-1]
+        interface_current_war = interface_dom.findAll('a')
         for waiting_time in range(1, time_out):
             time.sleep(3)
             interface_current_content = urllib2.urlopen(interface_war_url).read()
             interface_dom = BeautifulSoup.BeautifulSoup(interface_current_content)
             print_loading(waiting_time)
-            if interface_current_war != interface_dom.findAll('a')[-1].getText()[:-1]:
+            if interface_current_war.__len__() != interface_dom.findAll('a').__len__():
                 print('==========interface build finish=========')
                 break
 
@@ -81,14 +81,21 @@ def build_target_project(target_project):
     urllib2.urlopen(project_hudson_url).read()
     war_current_content = urllib2.urlopen(war_url).read()
     target_project_dom = BeautifulSoup.BeautifulSoup(war_current_content)
-    current_war = target_project_dom.findAll('a')[-1].getText()[:-1]
+    current_war = target_project_dom.findAll('a')
     for waiting_time in range(1, time_out):
         time.sleep(3)
         war_current_content = urllib2.urlopen(war_url).read()
         target_project_dom = BeautifulSoup.BeautifulSoup(war_current_content)
         print_loading(waiting_time)
-        if current_war != target_project_dom.findAll('a')[-1].getText()[:-1]:
-            target_url = war_url + target_project_dom.findAll('a')[-1].getText()[:-1]
+        if current_war.__len__() != target_project_dom.findAll('a').__len__():
+            old_set = set()
+            new_set = set()
+            for old in current_war:
+                old_set.add(old.getText())
+            for new in target_project_dom.findAll('a'):
+                new_set.add(new.getText())
+            target_war_url = new_set - old_set
+            target_url = war_url + next(iter(target_war_url))
             print('==========build finish=========')
             print('==========download url=========')
             print(target_url)
