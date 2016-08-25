@@ -45,7 +45,7 @@ def build_supp_service(target_project):
         service_dom = BeautifulSoup.BeautifulSoup(service_war_content)
         service_current_war = service_dom.findAll('a')
         for waiting_time in range(1, time_out):
-            time.sleep(3)
+            time.sleep(7)
             service_current_content = urllib2.urlopen(service_war_url).read()
             service_dom = BeautifulSoup.BeautifulSoup(service_current_content)
             print_loading(waiting_time)
@@ -65,7 +65,7 @@ def build_interface(target_project):
         interface_dom = BeautifulSoup.BeautifulSoup(interface_content)
         interface_current_war = interface_dom.findAll('a')
         for waiting_time in range(1, time_out):
-            time.sleep(3)
+            time.sleep(5)
             interface_current_content = urllib2.urlopen(interface_war_url).read()
             interface_dom = BeautifulSoup.BeautifulSoup(interface_current_content)
             print_loading(waiting_time)
@@ -83,7 +83,7 @@ def build_target_project(target_project):
     target_project_dom = BeautifulSoup.BeautifulSoup(war_current_content)
     current_war = target_project_dom.findAll('a')
     for waiting_time in range(1, time_out):
-        time.sleep(3)
+        time.sleep(5)
         war_current_content = urllib2.urlopen(war_url).read()
         target_project_dom = BeautifulSoup.BeautifulSoup(war_current_content)
         print_loading(waiting_time)
@@ -125,7 +125,7 @@ def deploy_new_war(target_project, target_url):
     open(out, "wb").write(page.read())
     print('============deploying war=============')
     for waiting_time in range(1, time_out):
-        time.sleep(1)
+        time.sleep(3)
         print_loading(waiting_time)
         if os.path.isdir(path + "/" + target_project):
             break
