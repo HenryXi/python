@@ -144,8 +144,6 @@ def replace_js_config(target_project):
             os.rename(path + "/" + target_project + "/mall/js/config_test.js",
                       path + "/" + target_project + "/mall/js/config.js")
             break
-        elif 'lhjh-support-web' == target_project and os.path.isdir(path + "/ROOT"):
-            break
     print('============replace js config finish!=============')
 
 
